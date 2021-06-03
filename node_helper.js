@@ -17,7 +17,7 @@ module.exports = NodeHelper.create({
             var url = 'http://' + bridgeIp + '/api/' + user;
             var self = this;
 
-            request(url, {method: 'GET'}, function(err, res, body) {
+            request(url + '/lights', {method: 'GET'}, function(err, res, body) {
 
                 if ((err) || (res.statusCode !== 200)) {
                     self.sendSocketNotification('MMM_HUE_LIGHTS_DATA_ERROR', 'Hue API Error: ' + err);
@@ -25,8 +25,20 @@ module.exports = NodeHelper.create({
                     if (body === {}) {
                         self.sendSocketNotification('MMM_HUE_LIGHTS_DATA_ERROR', 'Hue API Error: No Hue data was received.');
                     } else {
-                        var data = JSON.parse(body);
-                        self.sendSocketNotification('MMM_HUE_LIGHTS_DATA', data);
+                        var data;
+						data.lights = JSON.parse(body);
+						request( url + '/groups', {method: 'GET'}, function (err, res, body) {
+							if ((err) || (res.statusCode !== 200)) {
+								self.sendSocketNotification('MMM_HUE_LIGHTS_DATA_ERROR', 'Hue API Error: ' + err);
+							} else {
+								if (body === {}) {
+									self.sendSocketNotification('MMM_HUE_LIGHTS_DATA_ERROR', 'Hue API Error: No Hue data was received.');
+								} else {
+									data.groups = JSON.parse(body) ;
+									self.sendSocketNotification('MMM_HUE_LIGHTS_DATA', data);
+								}
+							}
+						});
                     }
                 }
 
