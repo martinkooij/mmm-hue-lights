@@ -403,6 +403,7 @@ Module.register('mmm-hue-lights', {
                         var light = self.lights[lightId];
                         if (light) {
                             if (light.state.on) {
+								lightsOn++ ; //MK
                                 itemBrightness += light.state.bri;
                                 var lightColor = self.getHueColorStyle(light);
                                 if (lightColor.colorHex) {
@@ -444,8 +445,6 @@ Module.register('mmm-hue-lights', {
                             lightOrDark = 'light';
                         }
 
-                        lightsOn = colorRgbArr.length;
-
                         for (j = 0; j < colorRgbSortedArr.length; j++) {
 
                             if (colorRgbSortedArr.length > 1) {
@@ -466,7 +465,7 @@ Module.register('mmm-hue-lights', {
                             colorStyle += ');';
                         }
 
-                        itemBrightness = itemBrightness / lightsOn;
+                        itemBrightness = itemBrightness / colorRgbArr.length; //MK
 
                     }
 
